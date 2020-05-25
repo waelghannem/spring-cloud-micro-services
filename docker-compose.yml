@@ -1,0 +1,39 @@
+version: '3'
+services:
+  eurekaservice:
+    build: ./eureka-service/eureka-service
+    ports:
+      - 8761:8761
+  customerservice:
+    build: ./customer-service
+    environment:
+      - JAVA_OPTS=
+         -DEUREKA_SERVER=http://eurekaservice:8761/eureka
+    depends_on:
+      - eurekaservice
+    ports:
+      - 8081:8081
+  inventoryservice:
+    build: ./inventory-service/inventory-service
+    environment:
+      - JAVA_OPTS=
+         -DEUREKA_SERVER=http://eurekaservice:8761/eureka
+    depends_on:
+      - eurekaservice
+    ports:
+      - 8082:8082  
+  gateway:
+    build: ./gateway
+    environment:
+      - JAVA_OPTS=
+         -DEUREKA_SERVER=http://eurekaservice:8761/eureka
+    depends_on:
+      - eurekaservice
+    ports:
+      - 8083:8083
+  hystrix-dashboard:
+    build: ./hystrix-dashboard/hystrix-dashboard
+    depends_on:
+      - gateway
+    ports:
+      - 8888:8888

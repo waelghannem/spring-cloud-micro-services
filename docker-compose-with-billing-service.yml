@@ -1,0 +1,35 @@
+version: '3'
+services:
+  eurekaservice:
+    image: wael/microservice-docker-eureka-service:0.0.1-SNAPSHOT
+    ports:
+      - 8761:8761
+  customerservice:
+    image: wael/microservice-docker-customer-service:0.0.1-SNAPSHOT
+    ports:
+      - 8081:8081
+  inventoryservice:
+    image: wael/microservice-docker-inventory-service:0.0.1-SNAPSHOT
+    ports:
+      - 8082:8082  
+  gateway:
+    image: wael/microservice-docker-gateway:0.0.1-SNAPSHOT
+    depends_on:
+      - eurekaservice
+    ports:
+      - 8083:8083
+  billingservice:
+    image: wael/microservice-docker-billing-service:0.0.1-SNAPSHOT
+    depends_on:
+      - gateway
+      - customerservice
+      - inventoryservice
+    ports:
+      - 8083:8083
+  hystrix-dashboard:
+    image: wael/microservice-docker-hystrix-dashboard:0.0.1-SNAPSHOT
+    environment:
+    depends_on:
+      - gateway
+    ports:
+      - 8888:8888
